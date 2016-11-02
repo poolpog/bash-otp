@@ -21,35 +21,39 @@ Set of bash shell scripts to generate OTP *value* from token using TOTP.
 
 First ensure that there is a directory "tokenfiles" in the main dir where the script resides.
 
-1. Create token file
+1. Create token file and encrypt it. Resulting file, "tokenfiles/tokenname.enc", is an encrypted file containing the token
+  1. Put your token in a plaintext file in the tokenfiles/ directory:
 ```
-# Put your token in a plaintext file:
-$ echo "1234567890abcdef" > tokenfile
-
-#Encrypt the file with the included shell script:
-$ ./otp-lockfile.sh tokenfiles/tokenfile
-
-# Confirm it worked:
+$ echo "1234567890abcdef" > tokenfiles/tokenname
+```
+  1. Encrypt the file with the included shell script:
+```
+$ ./otp-lockfile.sh tokenfiles/tokenname
+Password: (enter a good password)
+```
+  1. Confirm it worked:
+```
 $ ls tokenfiles/
-tokenfile.enc
-
-(enter a good password)
-
-Results in a file, "tokenfiles/tokenfile.enc", which is an encrypted file containing the token
+tokenname.enc
 ```
-    
 1. Run otp.sh; will produce roughly the following output:
 ```
-$ otp.sh tokenfile
+$ ./otp.sh tokenname
 Password:
 02: 123456
 ```
 
 The number on the left is the seconds counter; a new TOTP token is generated every 30 seconds.
 
+The number on the right is the 6-digit One-Time Password.
+
+On MacOS, this will be copied directly into the paste buffer. Just press "Command-V" to paste into a login dialog.
+
+
 ## Contents
 
 * Script to do the actual value generation
 * Script to encrypt the token in a file
 * Script to decrypt same
+* Empty "tokenfiles/" directory
 
