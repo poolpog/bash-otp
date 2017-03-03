@@ -11,7 +11,7 @@ This script supports both encrypted and plain-text token files, but my reccomend
 
 * oathtool (http://www.nongnu.org/oath-toolkit/)
 * OpenSSL
-
+* xclip (Linux)
 
 ## Description
 
@@ -50,7 +50,7 @@ The number on the left is the seconds counter; a new TOTP token is generated eve
 
 The number on the right is the 6-digit One-Time Password.
 
-On MacOS, this will be copied directly into the paste buffer. Just press "Command-V" to paste into a login dialog.
+This will be copied directly into the paste buffer. Just press "Command-V" (or "CTRL-V" on Linux) to paste into a login dialog.
 
 
 ## Contents

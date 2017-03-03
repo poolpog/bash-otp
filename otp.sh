@@ -57,6 +57,11 @@ while true; do
     else
         echo -ne "$D: $X\r"
     fi
-    echo -n $X | pbcopy
+    OS=$( uname )
+    if [[ $OS = "Darwin" ]]; then
+        echo -n $X | pbcopy
+    elif [[ $OS = "Linux" ]]; then
+        echo -n $X | xclip -sel clip
+    fi
     sleep 1
 done
