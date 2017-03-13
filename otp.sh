@@ -51,7 +51,7 @@ if [ $D -lt 0 ] ; then D="00"; fi
 
 while true; do
     D="$( date  +%S )"
-    X=$( oathtool --totp -b $TOKEN )
+    X=$( oathtool --totp -b "$TOKEN" )
     if [ $D = '59'  -o $D = '29' ] ; then
         echo "$D: $X"
     else
