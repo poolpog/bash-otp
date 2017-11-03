@@ -23,13 +23,15 @@ function validate_modifiers {
 }
 
 function check_permissions {
-  TOKENFILES_DIR_MODE="$( ls -ldH $TOKENFILES_DIR | awk '{print $1}'| sed 's/.//' )"
-  U_MODE="$( echo $TOKENFILES_DIR_MODE | gawk  -F '' '{print $1 $2 $3}' )"
-  G_MODE="$( echo $TOKENFILES_DIR_MODE | gawk  -F '' '{print $4 $5 $6}' )"
-  A_MODE="$( echo $TOKENFILES_DIR_MODE | gawk  -F '' '{print $7 $8 $9}' )"
+  OS=$( uname )
+  if [[ $OS = "Darwin" ]]; then
+    PERMISSIONS=$( stat -L -f "%A" $1 )
+  elif [[ $OS = "Linux" ]]; then
+    PERMISSIONS=$( stat -L -c "%a" $1 )
+  fi
 
-  if [ "$( echo $G_MODE | egrep 'r|w|x' )" -o "$( echo $A_MODE | egrep 'r|w|x' )" ]; then
-    echo "Perms on [$TOKENFILES_DIR] are too permissive. Try 'chmod 700 $TOKENFILES_DIR' first"
+  if [ $PERMISSIONS != $2 ]; then
+    echo "Perms on [$1] are too permissive. Try 'chmod $2 $1' first"
     exit 1
   fi
 }
@@ -49,6 +51,7 @@ function check_file {
 
   for file in ${FILES[@]}; do
     if [[ -f "${file}" ]]; then
+      check_permissions $file "400"
       TOKEN_FILE="${file}"
       return 0
     fi
@@ -66,7 +69,7 @@ function get_token {
   fi
 }
 
-function verify_clip_command {
+function verify_command {
   command -v $1 >/dev/null 2>&1 || { echo >&2 "Required '$1'. Install it and try again."; echo "Aborting."; exit 1; }
 }
 
@@ -74,13 +77,28 @@ function copy_to_clipboard {
   if [ "$X" != "$LAST_PASSWORD" ]; then
     OS=$( uname )
     if [[ $OS = "Darwin" ]]; then
-      verify_clip_command "pbcopy"
+      verify_command "pbcopy"
       echo -n $X | pbcopy
     elif [[ $OS = "Linux" ]]; then
-      verify_clip_command "xclip"
+      verify_command "xclip"
       echo -n $X | xclip -sel clip
     fi
     LAST_PASSWORD="$X"
+  fi
+}
+
+function set_tokenfiles_dir {
+  TOKENFILES="tokenfiles"
+  USER_HOME="$HOME/$TOKENFILES"
+  BIN_HOME="$( dirname ${0} )/$TOKENFILES"
+
+  if [[ -a "$USER_HOME" ]]; then
+    TOKENFILES_DIR="$USER_HOME"
+  elif [[ -a "$BIN_HOME" ]]; then
+    TOKENFILES_DIR=$BIN_HOME
+  else
+    echo "ERROR: $USER_HOME directory does not exists."
+    exit 1
   fi
 }
 
@@ -94,9 +112,14 @@ function show_usage {
   exit 1
 }
 
+#Init
+verify_command "openssl"
+
 if [ "$#" == 0 ]; then
   show_usage "Missing parameters"
 fi
+
+set_tokenfiles_dir
 
 PARAMETERS=( "$@" )
 TOKEN_NAME="${PARAMETERS[${#PARAMETERS[@]}-1]}"
@@ -104,13 +127,9 @@ TOKEN_NAME="${PARAMETERS[${#PARAMETERS[@]}-1]}"
 unset "PARAMETERS[${#PARAMETERS[@]}-1]"
 MODIFIERS=${PARAMETERS[@]}
 
-OTP_HOME="$( echo ${HOME} || dirname ${0} )"
-TOKENFILES_DIR="${OTP_HOME}/tokenfiles"
-
-#Init
-check_permissions
-check_file
 validate_modifiers
+check_permissions $TOKENFILES_DIR "700"
+check_file
 get_token
 
 echo > $( echo "$OUTPUT" )
