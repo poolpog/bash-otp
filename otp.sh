@@ -104,11 +104,11 @@ function set_tokenfiles_dir {
 
 function show_usage {
   echo "ERROR: $1"
-  echo "Usage: ./otp.sh [1cs] <Token Name>"
+  echo "Usage: $( basename ${0} ) [-1] [-c] [-s] <Token Name>"
   echo
-  echo " 1 : Get 1 password and exit"
-  echo " c : Copy to clipboard"
-  echo " s : Silent"
+  echo " -1 : Get 1 password and exit."
+  echo " -c : Copy to clipboard. This will be copied directly into the paste buffer. Just paste it anywhere."
+  echo " -s : Silent. Do not output anything to console."
   exit 1
 }
 
