@@ -9,8 +9,8 @@
 #openssl enc -aes-256-cbc -d -salt -in file.txt.enc -out file.txt
 
 function validate_modifiers {
-  if [[ $MODIFIERS == *c* ]]; then
-    CLIPBOARD=true
+  if [[ $MODIFIERS == *n* ]]; then
+    NO_CLIPBOARD=true
   fi
   if [[ $MODIFIERS == *1* ]]; then
     ONE_TIME=true
@@ -74,16 +74,18 @@ function verify_command {
 }
 
 function copy_to_clipboard {
-  if [ "$X" != "$LAST_PASSWORD" ]; then
-    OS=$( uname )
-    if [[ $OS = "Darwin" ]]; then
-      verify_command "pbcopy"
-      echo -n $X | pbcopy
-    elif [[ $OS = "Linux" ]]; then
-      verify_command "xclip"
-      echo -n $X | xclip -sel clip
+  if [ "$NO_CLIPBOARD" != "true" ]; then
+    if [ "$X" != "$LAST_PASSWORD" ]; then
+      OS=$( uname )
+      if [[ $OS = "Darwin" ]]; then
+        verify_command "pbcopy"
+        echo -n $X | pbcopy
+      elif [[ $OS = "Linux" ]]; then
+        verify_command "xclip"
+        echo -n $X | xclip -sel clip
+      fi
+      LAST_PASSWORD="$X"
     fi
-    LAST_PASSWORD="$X"
   fi
 }
 
@@ -104,10 +106,10 @@ function set_tokenfiles_dir {
 
 function show_usage {
   echo "ERROR: $1"
-  echo "Usage: $( basename ${0} ) [-1] [-c] [-s] <Token Name>"
+  echo "Usage: $( basename ${0} ) [-1] [-n] [-s] <Token Name>"
   echo
   echo " -1 : Get 1 password and exit."
-  echo " -c : Copy to clipboard. This will be copied directly into the paste buffer. Just paste it anywhere."
+  echo " -n : Do not copy to clipboard."
   echo " -s : Silent. Do not output anything to console."
   exit 1
 }
@@ -140,9 +142,7 @@ while true; do
   D="$( date  +%S )"
   X=$( oathtool --totp -b "$TOKEN" )
 
-  if [ $CLIPBOARD ]; then
-    copy_to_clipboard $X
-  fi
+  copy_to_clipboard $X
 
   echo -ne "$D: $X\r" > $( echo "$OUTPUT" )
 

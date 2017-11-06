@@ -3,7 +3,7 @@ One-Time Password generator for CLI using bash, oathtool.
 
 This is basically "Authy for the CLI"
 
-Automatically copies (using modifier "-c") the token into your computer's copy buffer
+Automatically copies the token into your computer's copy buffer. Just paste it anywhere.
 
 This script supports both encrypted and plain-text token files, but my recommendation is to use encryption.
 
@@ -54,10 +54,10 @@ The number on the right is the 6-digit One-Time Password.
 ### Usage
 
 ```
-./otp.sh [-1] [-c] [-s] <Token Name>
+./otp.sh [-1] [-n] [-s] <Token Name>
 
  -1 : Get 1 password and exit.
- -c : Copy to clipboard. This will be copied directly into the paste buffer. Just paste it anywhere.
+ -n : Do not copy to clipboard.
  -s : Silent. Do not output anything to console.
 ```
 
