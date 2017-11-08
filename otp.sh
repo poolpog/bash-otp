@@ -134,6 +134,10 @@ check_permissions $TOKENFILES_DIR "700"
 check_file
 get_token
 
+if [[ ! $TOKEN =~ ^[0-9A-Z]+$ ]]; then
+  exit 1
+fi
+
 echo > $( echo "$OUTPUT" )
 
 LAST_PASSWORD=0
