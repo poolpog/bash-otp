@@ -12,8 +12,6 @@ set -e
 #openssl enc -aes-256-cbc -d -salt -in file.txt.enc -out file.txt
 
 INPUT_FILE="$1"
-OUTPUT_FILE=$( echo $INPUT_FILE | sed 's/.enc//' )
-PW_FILE=$( mktemp pwfile.XXXXXXXX )
 
 if [ ! -f "${INPUT_FILE}" ]; then
     echo "The file [${INPUT_FILE}] does not exist"
@@ -21,6 +19,9 @@ if [ ! -f "${INPUT_FILE}" ]; then
 fi
 
 read -s -r -p "Password to unlock file: " PASSWORD1
+
+OUTPUT_FILE=$( echo $INPUT_FILE | sed 's/.enc//' )
+PW_FILE=$( mktemp pwfile.XXXXXXXX )
 
 echo "${PASSWORD1}" > "${PW_FILE}"
 openssl enc -aes-256-cbc -d -salt -in "${INPUT_FILE}" -out "${OUTPUT_FILE}" -pass file:"${PW_FILE}"
