@@ -9,17 +9,23 @@
 #openssl enc -aes-256-cbc -d -salt -in file.txt.enc -out file.txt
 
 function validate_modifiers {
-  if [[ $MODIFIERS == *n* ]]; then
-    NO_CLIPBOARD=true
-  fi
-  if [[ $MODIFIERS == *1* ]]; then
-    ONE_TIME=true
-  fi
-  if [[ $MODIFIERS == *s* ]]; then
-    OUTPUT="/dev/null"
-  else
-    OUTPUT="/dev/stdout"
-  fi
+  OUTPUT="/dev/stdout"
+
+  while [ $# -gt 1 ]
+  do
+    if [[ "$1" == "-n" ]]; then
+      NO_CLIPBOARD=true
+    fi
+    if [[ "$1" == "-1" ]]; then
+      ONE_TIME=true
+    fi
+    if [[ "$1" == "-s" ]]; then
+      OUTPUT="/dev/null"
+    fi
+    shift
+  done
+
+  [[ $1 != -* ]] && TOKEN_NAME="$1"
 }
 
 function check_permissions {
@@ -123,13 +129,13 @@ fi
 
 set_tokenfiles_dir
 
-PARAMETERS=( "$@" )
-TOKEN_NAME="${PARAMETERS[${#PARAMETERS[@]}-1]}"
+validate_modifiers $@
 
-unset "PARAMETERS[${#PARAMETERS[@]}-1]"
-MODIFIERS=${PARAMETERS[@]}
+if [ -z "$TOKEN_NAME" ]; then
+  show_usage "Missing Token Name"
+  exit 1
+fi
 
-validate_modifiers
 check_permissions $TOKENFILES_DIR "700"
 check_file
 get_token
