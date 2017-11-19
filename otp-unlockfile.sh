@@ -18,7 +18,6 @@ if [ ! -f "${INPUT_FILE}" ]; then
     exit 1
 fi
 
-
 read -s -r -p "Password to unlock file: " PASSWORD1
 
 OUTPUT_FILE=$( echo $INPUT_FILE | sed 's/.enc//' )
