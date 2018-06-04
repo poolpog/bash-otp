@@ -9,7 +9,7 @@
 #openssl enc -aes-256-cbc -d -salt -in file.txt.enc -out file.txt
 
 # Init
-TOKENFILES_DIR="$( dirname ${0} )/tokenfiles"
+TOKENFILES_DIR="${BASH_OTP_TOKENFILES_DIR:-$( dirname ${0} )/tokenfiles}"
 TOKENFILES_DIR_MODE="$( ls -ld ${TOKENFILES_DIR} | awk '{print $1}'| sed 's/.//' )"
 U_MODE="$( echo $TOKENFILES_DIR_MODE | gawk  -F '' '{print $1 $2 $3}' )"
 G_MODE="$( echo $TOKENFILES_DIR_MODE | gawk  -F '' '{print $4 $5 $6}' )"
