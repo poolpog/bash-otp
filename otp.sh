@@ -53,7 +53,7 @@ while true; do
     D="$( date  +%S )"
     X=$( oathtool --totp -b "$TOKEN" )
     if [ $D = '59'  -o $D = '29' ] ; then
-        printf "$D: $X"
+        printf "$D: $X\n"
     else
         printf "$D: $X\r"
     fi
