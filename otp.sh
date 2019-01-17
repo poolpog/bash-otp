@@ -53,15 +53,15 @@ while true; do
     D="$( date  +%S )"
     X=$( oathtool --totp -b "$TOKEN" )
     if [ $D = '59'  -o $D = '29' ] ; then
-        echo "$D: $X"
+        printf "$D: $X"
     else
-        echo -ne "$D: $X\r"
+        printf "$D: $X\r"
     fi
     OS=$( uname )
     if [[ $OS = "Darwin" ]]; then
-        echo -n $X | pbcopy
+        printf $X | pbcopy
     elif [[ $OS = "Linux" ]]; then
-        echo -n $X | xclip -sel clip
+        printf $X | xclip -sel clip
     fi
     sleep 1
 done
