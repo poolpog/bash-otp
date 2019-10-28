@@ -1,0 +1,5 @@
+#!/bin/sh
+
+ROOT="$(dirname "$(readlink -f ${0})")"
+cd "$ROOT"
+exec "$ROOT"/otp.sh "${@}"
