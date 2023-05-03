@@ -33,13 +33,20 @@ function get_plaintext_token_from_file {
     cat ${TOKENFILES_DIR}/$token
 }
 
+RESULT=0
 if [[ -f "${TOKENFILES_DIR}/${token}.enc" ]]; then
     TOKEN=$( get_decrypted_token_from_file $token )
+    RESULT=$?
 elif [[ -f "${TOKENFILES_DIR}/${token}" ]]; then
     TOKEN=$( get_plaintext_token_from_file $token )
 else
     echo "ERROR: Key file [${TOKENFILES_DIR}/$token] doesn't exist"
     exit 1
+fi
+
+if [ $RESULT -ne 0 ]; then
+    echo "Failed to decrypt token"
+    exit $?
 fi
 
 #TOKEN=$( get_decrypted_token_from_file $token )
