@@ -11,9 +11,9 @@
 # Init
 TOKENFILES_DIR="${BASH_OTP_TOKENFILES_DIR:-$( dirname ${0} )/tokenfiles}"
 TOKENFILES_DIR_MODE="$( ls -ld ${TOKENFILES_DIR} | awk '{print $1}'| sed 's/.//' )"
-U_MODE="$( echo $TOKENFILES_DIR_MODE | awk  -F '' '{print $1 $2 $3}' )"
-G_MODE="$( echo $TOKENFILES_DIR_MODE | awk  -F '' '{print $4 $5 $6}' )"
-A_MODE="$( echo $TOKENFILES_DIR_MODE | awk  -F '' '{print $7 $8 $9}' )"
+U_MODE="$( echo $TOKENFILES_DIR_MODE | cut -c 1-3 )"
+G_MODE="$( echo $TOKENFILES_DIR_MODE | cut -c 4-6 )"
+A_MODE="$( echo $TOKENFILES_DIR_MODE | cut -c 7-9 )"
 
 if [ "$( echo $G_MODE | egrep 'r|w|x' )" -o "$( echo $A_MODE | egrep 'r|w|x' )" ]; then
     echo "Perms on [${TOKENFILES_DIR}] are too permissive. Try 'chmod 700 ${TOKENFILES_DIR}' first"
